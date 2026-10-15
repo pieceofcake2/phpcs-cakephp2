@@ -36,6 +36,27 @@ jobs:
       - name: Validate composer.json
         run: composer validate --strict
 
+  install_php80:
+    # The package must install in the PHP 8.0 jobs of the projects that use it. PHP_CodeSniffer
+    # is not run there: on PHP 8.0, Composer falls back to cakephp/cakephp-codesniffer 5.1.0,
+    # whose CakePHP standard does not load with the current slevomat/coding-standard.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Check that the standard is registered
+        run: vendor/bin/phpcs -i | grep -q CakePHP2
+
   phpunit:
     runs-on: ubuntu-latest
 
@@ -43,7 +64,6 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - '8.0'
           - '8.1'
           - '8.2'
           - '8.3'
