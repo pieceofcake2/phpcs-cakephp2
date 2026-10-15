@@ -15,8 +15,8 @@ they are, not copied, so their updates arrive with cakephp/cakephp-codesniffer.
 
 ## Documentation
 
-- Website: https://pieceofcake2.github.io/phpcs-cakephp2/
-- Markdown: [docs/README.md](docs/README.md) (for AI tools and offline reading)
+- Website: https://pieceofcake2.github.io/phpcs-cakephp2/ (日本語: https://pieceofcake2.github.io/phpcs-cakephp2/ja/)
+- Markdown: [docs/README.md](docs/README.md) (日本語: [docs/ja/README.md](docs/ja/README.md)) (for AI tools and offline reading)
 
 The Markdown documentation is also included in the Composer package, at `vendor/pieceofcake2/phpcs-cakephp2/docs/README.md`. Install the package with `--dev` if you only need it for development.
 
