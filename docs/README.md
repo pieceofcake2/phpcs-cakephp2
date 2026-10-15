@@ -14,7 +14,7 @@ The package does not fork cakephp/cakephp-codesniffer. It depends on it and refe
 - [Configuration](#configuration)
 - [Rules](#rules)
 - [Adding Exceptions](#adding-exceptions)
-- [Migrating from a CakePHP-Based phpcs.xml](#migrating-from-a-cakephp-based-phpcs-xml)
+- [Migrating from a CakePHP-Based phpcs.xml](#migrating-from-a-cakephp-based-phpcsxml)
 - [Development](#development)
 
 ## Installation
