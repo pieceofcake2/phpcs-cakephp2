@@ -106,7 +106,7 @@ unchanged.
 | `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName` | Class names in annotations are global names. |
 | `SlevomatCodingStandard.TypeHints.PropertyTypeHint` | Native types would change the signatures that CakePHP 2 classes and their subclasses share; types are documented in docblocks. |
 | `SlevomatCodingStandard.TypeHints.ParameterTypeHint` | Same as above. |
-| `SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint` | Same as above. Native return types are still allowed, e.g. `: void` on test methods. |
+| `SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint` | Same as above. The tests are the exception: see `CakePHP2.TypeHints.TestReturnTypeHint` below. |
 | `SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing` | CakePHP 2 code is not written for strict types. |
 | `Zend.NamingConventions.ValidVariableName.StringVarNotCamelCaps` | Variables are named after models: `"{$Model->alias}"`. |
 | `Zend.NamingConventions.ValidVariableName.PublicHasUnderscore` | CakePHP 2 has underscored public properties. |
@@ -130,6 +130,7 @@ unchanged.
 | Sniff | Setting |
 | --- | --- |
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: aligned assignments may have at most one extra space. |
+| `CakePHP2.TypeHints.TestReturnTypeHint` | In `*/tests/TestCase/*` and `*/Test/Case/*`, every method and function needs a native return type: `setUp(): void`, `testFoo(): void`, `fooProvider(): array`. PHPUnit declares its template methods with native types, and test methods are only called by PHPUnit, so the tests can use them although the rest of CakePHP 2 code does not. `phpcbf` adds `: void` to methods that return nothing. Constructors are not checked. (The `CakePHP` standard does not check return types in `tests/` at all.) |
 
 ## Adding Exceptions
 
@@ -173,11 +174,14 @@ exceptions above written out in every `phpcs.xml`, after `<rule ref="CakePHP">`.
    `<rule ref="CakePHP2"/>`. Keep your `<config>`, `<arg>` and `<file>` entries and any
    exceptions for your own files.
 
-3. Run `vendor/bin/phpcs`. The result is the same as before.
+3. Run `vendor/bin/phpcs`. Since 1.1.0, test methods without a native return type are reported
+   (`CakePHP2.TypeHints.TestReturnTypeHint`); run `vendor/bin/phpcbf` to add `: void`, and add the
+   other return types by hand.
 
-The old configuration had a rule that required native return types in `tests/TestCase/`. It
-never took effect, because the `CakePHP` standard does not check return types in `tests/`, so
-the standard simply does not require native return types.
+The old configuration had a rule meant to require native return types in `tests/TestCase/`
+(`ReturnTypeHint.MissingNativeTypeHint` with an include pattern). It never took effect, because the
+`CakePHP` standard does not check return types in `tests/`. `CakePHP2.TypeHints.TestReturnTypeHint`
+does this job.
 
 ## Development
 

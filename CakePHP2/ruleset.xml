@@ -68,6 +68,13 @@
         <exclude-pattern>*/Model/Behavior/*</exclude-pattern>
     </rule>
 
+    <!-- Native return types in tests (setUp(): void, testFoo(): void, fooProvider(): array), which the CakePHP
+         standard does not check in tests/. See Sniffs/TypeHints/TestReturnTypeHintSniff.php. -->
+    <rule ref="CakePHP2.TypeHints.TestReturnTypeHint">
+        <include-pattern>*/tests/TestCase/*</include-pattern>
+        <include-pattern>*/Test/Case/*</include-pattern>
+    </rule>
+
     <!-- The datasource configuration class is named DATABASE_CONFIG -->
     <rule ref="Squiz.Classes.ValidClassName.NotPascalCase">
         <exclude-pattern>*/database.php</exclude-pattern>

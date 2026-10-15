@@ -2,11 +2,18 @@
     "name": "pieceofcake2/phpcs-cakephp2",
     "description": "PHP_CodeSniffer ruleset for CakePHP 2 applications and plugins, based on the CakePHP coding standard",
     "type": "phpcodesniffer-standard",
-    "keywords": ["phpcs", "codesniffer", "coding standard", "cakephp", "cakephp2"],
+    "keywords": [
+        "phpcs",
+        "codesniffer",
+        "coding standard",
+        "cakephp",
+        "cakephp2"
+    ],
     "license": "MIT",
     "require": {
         "php": ">=8.0",
-        "cakephp/cakephp-codesniffer": "^5.0"
+        "cakephp/cakephp-codesniffer": "^5.0",
+        "slevomat/coding-standard": "^8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6"
