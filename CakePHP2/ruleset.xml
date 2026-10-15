@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<ruleset name="CakePHP2">
+    <description>CakePHP coding standard (cakephp/cakephp-codesniffer) adapted for CakePHP 2 applications and plugins</description>
+
+    <rule ref="CakePHP">
+        <!-- ===== Namespace and Class Rules ===== -->
+        <!-- CakePHP 2 classes live in the global namespace and are loaded with App::uses() -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <!-- App::uses() at the top of a class file counts as a side effect for PSR-1 -->
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+        <!-- CakePHP 2 has its own file naming conventions (e.g. Config/Schema/schema.php) -->
+        <exclude name="Squiz.Classes.ClassFileName.NoMatch"/>
+
+        <!-- ===== Namespace/Import Rules ===== -->
+        <!-- Fully qualified names such as \Exception are fine without a namespace -->
+        <exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace"/>
+        <!-- Class names in annotations are global names -->
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName"/>
+
+        <!-- ===== Type Hints Rules ===== -->
+        <!-- Native property, parameter and return types would change the signatures that CakePHP 2
+             classes and their subclasses share, so types are documented in docblocks. They may still
+             be used where no class depends on the signature, e.g. test methods (: void). -->
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing"/>
+
+        <!-- ===== Variable Naming Rules ===== -->
+        <!-- CakePHP 2 names variables and properties after models ($Model, $LinkModel) -->
+        <exclude name="Zend.NamingConventions.ValidVariableName.StringVarNotCamelCaps"/>
+        <!-- CakePHP 2 uses underscored properties ($_schema, $__backAssociation) -->
+        <exclude name="Zend.NamingConventions.ValidVariableName.PublicHasUnderscore"/>
+        <exclude name="Zend.NamingConventions.ValidVariableName.PublicVarHasUnderscore"/>
+
+        <!-- ===== Control Structure Rules ===== -->
+        <!-- Common in CakePHP 2: while ($row = $result->fetch()) -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition"/>
+
+        <!-- ===== Formatting Rules ===== -->
+        <exclude name="CakePHP.Commenting.FunctionComment.SpacingAfter"/>
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+
+    <!-- Align assignments with at most one extra space -->
+    <rule ref="Generic.Formatting.MultipleStatementAlignment">
+        <properties>
+            <property name="maxPadding" value="1"/>
+        </properties>
+    </rule>
+
+    <!-- Test methods need no docblock -->
+    <rule ref="CakePHP.Commenting.FunctionComment.Missing">
+        <exclude-pattern>*/tests/TestCase/*</exclude-pattern>
+        <exclude-pattern>*/Test/Case/*</exclude-pattern>
+    </rule>
+
+    <!-- Test files may declare test doubles next to the test case -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>*/tests/TestCase/*</exclude-pattern>
+        <exclude-pattern>*/Test/Case/*</exclude-pattern>
+    </rule>
+
+    <!-- Controller actions (admin_index), shell methods and behavior callbacks use underscores -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>*/Controller/*</exclude-pattern>
+        <exclude-pattern>*/Console/Command/*</exclude-pattern>
+        <exclude-pattern>*/Model/Behavior/*</exclude-pattern>
+    </rule>
+
+    <!-- The datasource configuration class is named DATABASE_CONFIG -->
+    <rule ref="Squiz.Classes.ValidClassName.NotPascalCase">
+        <exclude-pattern>*/database.php</exclude-pattern>
+        <exclude-pattern>*/database.php.default</exclude-pattern>
+    </rule>
+
+    <!-- acl.ini.php starts with exit; to keep the INI data from being served -->
+    <rule ref="Squiz.PHP.NonExecutableCode.Unreachable">
+        <exclude-pattern>*/acl.ini.php</exclude-pattern>
+    </rule>
+</ruleset>
