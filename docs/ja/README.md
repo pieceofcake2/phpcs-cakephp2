@@ -20,7 +20,7 @@ CakePHP 2 のアプリケーションとプラグインのための
 
 ## インストール
 
-[Composer](https://getcomposer.org/) で、開発用の依存パッケージとして規約をインストールします:
+[Composer](https://getcomposer.org/) で、開発用の依存パッケージとして規約をインストールします。
 
 ```bash
 composer require --dev pieceofcake2/phpcs-cakephp2
@@ -29,7 +29,7 @@ composer require --dev pieceofcake2/phpcs-cakephp2
 これにより、PHP_CodeSniffer、cakephp/cakephp-codesniffer と
 [dealerdirect/phpcodesniffer-composer-installer](https://github.com/PHPCSStandards/composer-installer)
 プラグインがインストールされます。このプラグインは `CakePHP2` 規約と `CakePHP` 規約を PHP_CodeSniffer に登録します。
-Composer はプラグインを許可するか尋ねます。許可するか、自分で `composer.json` に追加してください:
+Composer はプラグインを許可するか尋ねます。許可するか、自分で `composer.json` に追加してください。
 
 ```json
 {
@@ -41,7 +41,7 @@ Composer はプラグインを許可するか尋ねます。許可するか、�
 }
 ```
 
-規約が登録されていることを確認します:
+規約が登録されていることを確認します。
 
 ```bash
 vendor/bin/phpcs -i
@@ -144,7 +144,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 
 ## 例外の追加
 
-プロジェクト固有の例外は、規約の後に追加します。一部のファイルで sniff を無効にするには、次のようにします:
+プロジェクト固有の例外は、規約の後に追加します。一部のファイルで sniff を無効にするには、次のようにします。
 
 ```xml
 <rule ref="CakePHP2"/>
@@ -155,7 +155,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 </rule>
 ```
 
-すべての場所で sniff を無効にするには、参照の中で除外します:
+すべての場所で sniff を無効にするには、参照の中で除外します。
 
 ```xml
 <rule ref="CakePHP2">
@@ -170,7 +170,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 ## CakePHP ベースの phpcs.xml からの移行
 
 このパッケージができるまで、pieceofcake2 のリポジトリと pieceofcake2/app スケルトンでは、上記の例外をすべての
-`phpcs.xml` の `<rule ref="CakePHP">` の後に書き出していました。切り替えるには次のようにします:
+`phpcs.xml` の `<rule ref="CakePHP">` の後に書き出していました。切り替えるには次のようにします。
 
 1. 依存パッケージを置き換えます:
 
