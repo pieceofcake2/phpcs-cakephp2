@@ -22,7 +22,7 @@ The Markdown documentation is also included in the Composer package, at `vendor/
 
 ## Requirements
 
-- PHP 8.1+ (to run PHP_CodeSniffer; the checked code may target PHP 8.0)
+- PHP 8.1+ to run PHP_CodeSniffer (installable on PHP 8.0)
 - cakephp/cakephp-codesniffer 5.x
 
 ## Installation
