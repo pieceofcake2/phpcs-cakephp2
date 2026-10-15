@@ -111,7 +111,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 | `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName` | アノテーション内のクラス名はグローバルな名前です。 |
 | `SlevomatCodingStandard.TypeHints.PropertyTypeHint` | ネイティブの型は、CakePHP 2 のクラスとそのサブクラスが共有するシグネチャを変えてしまいます。型は docblock に記述します。 |
 | `SlevomatCodingStandard.TypeHints.ParameterTypeHint` | 上と同じです。 |
-| `SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint` | 上と同じです。ネイティブの戻り値の型は引き続き使えます (例: テストメソッドの `: void`)。 |
+| `SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint` | 上と同じです。テストは例外です。下の `CakePHP2.TypeHints.TestReturnTypeHint` をご覧ください。 |
 | `SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing` | CakePHP 2 のコードは strict types を前提に書かれていません。 |
 | `Zend.NamingConventions.ValidVariableName.StringVarNotCamelCaps` | 変数はモデルの名前で命名されます: `"{$Model->alias}"`。 |
 | `Zend.NamingConventions.ValidVariableName.PublicHasUnderscore` | CakePHP 2 にはアンダースコア付きの public プロパティがあります。 |
@@ -139,6 +139,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 | Sniff | 設定 |
 | --- | --- |
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: 揃えた代入に追加できる空白は最大 1 つです。 |
+| `CakePHP2.TypeHints.TestReturnTypeHint` | `*/tests/TestCase/*` と `*/Test/Case/*` では、すべてのメソッドと関数にネイティブの戻り値の型が必要です: `setUp(): void`、`testFoo(): void`、`fooProvider(): array`。PHPUnit はテンプレートメソッドをネイティブの型で宣言しており、テストメソッドを呼ぶのは PHPUnit だけなので、CakePHP 2 のほかのコードと違ってテストでは使えます。何も返さないメソッドには `phpcbf` が `: void` を追加します。コンストラクターはチェックしません (`CakePHP` 規約は `tests/` では戻り値の型をまったくチェックしません)。 |
 
 <a id="adding-exceptions"></a>
 
@@ -185,11 +186,13 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
    `NotPascalCase` と `acl.ini.php` に対する `Unreachable`) を `<rule ref="CakePHP2"/>` に置き換えます。
    `<config>`、`<arg>`、`<file>` の項目と、自分のファイルに対する例外はそのまま残してください。
 
-3. `vendor/bin/phpcs` を実行します。結果は以前と同じです。
+3. `vendor/bin/phpcs` を実行します。1.1.0 からは、ネイティブの戻り値の型がないテストメソッドが報告されます
+   (`CakePHP2.TypeHints.TestReturnTypeHint`)。`vendor/bin/phpcbf` で `: void` を追加し、ほかの戻り値の型は
+   手で追加してください。
 
-以前の設定には、`tests/TestCase/` でネイティブの戻り値の型を必須にするルールがありました。しかし `CakePHP` 規約は
-`tests/` では戻り値の型をチェックしないので、このルールは一度も効果がありませんでした。そのため、この規約は
-ネイティブの戻り値の型を必須にしていません。
+以前の設定には、`tests/TestCase/` でネイティブの戻り値の型を必須にするためのルール (include pattern 付きの
+`ReturnTypeHint.MissingNativeTypeHint`) がありました。しかし `CakePHP` 規約は `tests/` では戻り値の型をチェックしないので、
+このルールは一度も効果がありませんでした。その役割は `CakePHP2.TypeHints.TestReturnTypeHint` が担います。
 
 <a id="development"></a>
 

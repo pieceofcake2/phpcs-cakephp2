@@ -32,6 +32,10 @@ class RulesetTest extends TestCase
                     'SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces',
                 ],
             ],
+            'test methods and test doubles without native return types' => [
+                'invalid/tests/TestCase/MissingReturnTypeTest.php',
+                ['CakePHP2.TypeHints.TestReturnTypeHint.MissingNativeTypeHint'],
+            ],
             'public method with a leading underscore' => [
                 'invalid/Model/Post.php',
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
