@@ -47,8 +47,11 @@ vendor/bin/phpcs -i
 # The installed coding standards are ..., CakePHP2, CakePHP and SlevomatCodingStandard
 ```
 
-PHP_CodeSniffer 4 and cakephp/cakephp-codesniffer 5.3 run on PHP 8.1 or later. The code you
-check can still target PHP 8.0: set `php_version` in `phpcs.xml` (see below).
+On PHP 8.1 and later, Composer installs the latest cakephp/cakephp-codesniffer 5.x with
+PHP_CodeSniffer 4. On PHP 8.0 it falls back to cakephp/cakephp-codesniffer 5.1.0 with
+PHP_CodeSniffer 3, the last versions for PHP 8.0, so `composer install` also works in a PHP 8.0
+test job. Run the coding standard check itself on a current PHP version; set `php_version` in
+`phpcs.xml` to the oldest PHP version your code supports (see below).
 
 The [pieceofcake2/app](https://github.com/pieceofcake2/app) skeleton is already set up with the
 standard.

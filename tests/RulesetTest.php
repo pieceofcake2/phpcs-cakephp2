@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace PieceOfCake2\PhpcsCakePHP2\Test;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,8 +42,8 @@ class RulesetTest extends TestCase
     /**
      * @param string $file File in fixtures/
      * @param list<string> $expected Sniff codes expected to be reported
+     * @dataProvider fileProvider
      */
-    #[DataProvider('fileProvider')]
     public function testFile(string $file, array $expected): void
     {
         $this->assertSame($expected, $this->sniff($file));
