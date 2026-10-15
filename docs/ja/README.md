@@ -63,7 +63,7 @@ cakephp/cakephp-codesniffer 5.1.0 にフォールバックし、その `CakePHP`
 プロジェクトのルートに `phpcs.xml` ファイルを追加します。PHP_CodeSniffer はこのファイルを自動的に読み込むので、
 `vendor/bin/phpcs` と `vendor/bin/phpcbf` に引数は必要ありません。
 
-pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) のアプリケーションの場合:
+pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) のアプリケーションでは、次のようにします。
 
 ```xml
 <?xml version="1.0"?>
@@ -172,7 +172,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 このパッケージができるまで、pieceofcake2 のリポジトリと pieceofcake2/app スケルトンでは、上記の例外をすべての
 `phpcs.xml` の `<rule ref="CakePHP">` の後に書き出していました。切り替えるには次のようにします。
 
-1. 依存パッケージを置き換えます:
+1. 依存パッケージを置き換えます。
 
    ```bash
    composer remove --dev cakephp/cakephp-codesniffer
