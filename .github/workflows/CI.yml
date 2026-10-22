@@ -58,8 +58,10 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Check that the standard is registered
-        run: vendor/bin/phpcs -i | grep -q CakePHP2
+      - name: Check that the standards are registered
+        run: |
+          vendor/bin/phpcs -i | grep -qw CakePHP2
+          vendor/bin/phpcs -i | grep -qw CakePHP2Namespaced
 
   phpunit:
     runs-on: ubuntu-latest

@@ -42,6 +42,39 @@ class RulesetTest extends TestCase
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
             ],
         ],
+        'CakePHP2Namespaced' => [
+            'controller with a use statement only for an annotation' => ['valid/src/Controller/PostsController.php', []],
+            'model with an imported global exception class' => ['valid/src/Model/Post.php', []],
+            'behavior with short class names in annotations' => ['valid/src/Model/Behavior/SluggableBehavior.php', []],
+            'shell with a class in the same namespace' => ['valid/src/Console/Command/ReportShell.php', []],
+            'test case with a test double' => ['valid/tests/TestCase/Model/PostTest.php', []],
+            'global DATABASE_CONFIG' => ['valid/config/database.php', []],
+            'global schema class' => ['valid/config/Schema/schema.php', []],
+            'class without a namespace' => [
+                'invalid/src/Model/Post.php',
+                ['PSR1.Classes.ClassDeclaration.MissingNamespace'],
+            ],
+            'App::uses() next to a class' => [
+                'invalid/src/Model/Comment.php',
+                ['PSR1.Files.SideEffects.FoundWithSymbols'],
+            ],
+            'unused use statement' => [
+                'invalid/src/Controller/CommentsController.php',
+                ['SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse'],
+            ],
+            'fully qualified class names in annotations' => [
+                'invalid/src/Model/Behavior/CounterBehavior.php',
+                ['SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName'],
+            ],
+            'file not named after its class' => [
+                'invalid/src/Utility/Slugger.php',
+                ['Squiz.Classes.ClassFileName.NoMatch'],
+            ],
+            'leading backslash in a file without a namespace' => [
+                'invalid/config/bootstrap.php',
+                ['SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace'],
+            ],
+        ],
     ];
 
     /**
@@ -68,6 +101,28 @@ class RulesetTest extends TestCase
     public function testFile(string $standard, string $file, array $expected): void
     {
         $this->assertSame($expected, $this->sniff($standard, $file));
+    }
+
+    /**
+     * phpcbf imports the fully qualified class names of annotations and writes their short names
+     */
+    public function testFixFullyQualifiedNamesInAnnotations(): void
+    {
+        $root = dirname(__DIR__);
+        $file = $root . '/fixtures/CakePHP2Namespaced/invalid/src/Model/Behavior/CounterBehavior.php';
+        $command = sprintf(
+            '%s %s -q --standard=CakePHP2Namespaced --stdin-path=%s - < %s 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg($root . '/vendor/bin/phpcbf'),
+            escapeshellarg($file),
+            escapeshellarg($file),
+        );
+        exec($command, $output);
+        $fixed = implode("\n", $output);
+
+        $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\nuse InvalidArgumentException;\n", $fixed);
+        $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
+        $this->assertStringContainsString('@throws InvalidArgumentException When the model has no table', $fixed);
     }
 
     /**
