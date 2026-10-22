@@ -6,18 +6,19 @@ namespace PieceOfCake2\PhpcsCakePHP2\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Runs phpcs with the CakePHP2 standard on the files in fixtures/ and compares the reported sniffs.
+ * Runs phpcs with each standard on its files in fixtures/ and compares the reported sniffs.
  *
- * fixtures/valid holds CakePHP 2 code that must pass; fixtures/invalid holds code with known violations.
+ * fixtures/<standard>/valid holds code that must pass; fixtures/<standard>/invalid holds code with known violations.
  */
 class RulesetTest extends TestCase
 {
     /**
-     * @return array<string, array{string, list<string>}>
+     * Files per standard, with the sniff codes expected for each file
+     *
+     * @var array<string, array<string, array{string, list<string>}>>
      */
-    public static function fileProvider(): array
-    {
-        return [
+    private const FILES = [
+        'CakePHP2' => [
             'controller actions with underscores' => ['valid/Controller/PostsController.php', []],
             'behavior callbacks' => ['valid/Model/Behavior/SluggableBehavior.php', []],
             'shell with assignment in condition' => ['valid/Console/Command/ReportShell.php', []],
@@ -40,31 +41,49 @@ class RulesetTest extends TestCase
                 'invalid/Model/Post.php',
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
             ],
-        ];
+        ],
+    ];
+
+    /**
+     * @return array<string, array{string, string, list<string>}>
+     */
+    public static function fileProvider(): array
+    {
+        $cases = [];
+        foreach (self::FILES as $standard => $files) {
+            foreach ($files as $name => [$file, $expected]) {
+                $cases[$standard . ': ' . $name] = [$standard, $file, $expected];
+            }
+        }
+
+        return $cases;
     }
 
     /**
-     * @param string $file File in fixtures/
+     * @param string $standard Standard to check the file with
+     * @param string $file File in fixtures/<standard>/
      * @param list<string> $expected Sniff codes expected to be reported
      * @dataProvider fileProvider
      */
-    public function testFile(string $file, array $expected): void
+    public function testFile(string $standard, string $file, array $expected): void
     {
-        $this->assertSame($expected, $this->sniff($file));
+        $this->assertSame($expected, $this->sniff($standard, $file));
     }
 
     /**
-     * @param string $file File in fixtures/
+     * @param string $standard Standard to check the file with
+     * @param string $file File in fixtures/<standard>/
      * @return list<string> Sorted, unique sniff codes reported for the file
      */
-    private function sniff(string $file): array
+    private function sniff(string $standard, string $file): array
     {
         $root = dirname(__DIR__);
         $command = sprintf(
-            '%s %s -q --standard=CakePHP2 --report=json --no-cache %s',
+            '%s %s -q --standard=%s --report=json --no-cache %s',
             escapeshellarg(PHP_BINARY),
             escapeshellarg($root . '/vendor/bin/phpcs'),
-            escapeshellarg($root . '/fixtures/' . $file),
+            escapeshellarg($standard),
+            escapeshellarg($root . '/fixtures/' . $standard . '/' . $file),
         );
         exec($command, $output);
         $report = json_decode(implode("\n", $output), true, flags: JSON_THROW_ON_ERROR);

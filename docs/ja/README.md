@@ -201,14 +201,14 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 ```bash
 composer install
 
-# Run the tests: phpcs with the standard on the files in fixtures/
+# Run the tests: phpcs with each standard on its files in fixtures/
 vendor/bin/phpunit
 
 # Check the coding standard of the tests
 vendor/bin/phpcs
 ```
 
-`composer test` は両方を実行します。`fixtures/valid/` には合格しなければならない CakePHP 2 のコードが、
-`fixtures/invalid/` には既知の違反を含むコードがあります。`tests/RulesetTest.php` には、ファイルごとに期待される
-sniff が列挙されています。`CakePHP` 規約は `tests/` では一部の sniff をスキップするので、フィクスチャは `tests/` の
+`composer test` は両方を実行します。`fixtures/` には規約ごとのディレクトリ（`fixtures/CakePHP2/` など）があり、
+`valid/` には合格しなければならない CakePHP 2 のコードが、`invalid/` には既知の違反を含むコードがあります。
+`tests/RulesetTest.php` には、ファイルごとに期待される sniff が列挙されています。`CakePHP` 規約は `tests/` では一部の sniff をスキップするので、フィクスチャは `tests/` の
 外に置いています。

@@ -188,14 +188,14 @@ does this job.
 ```bash
 composer install
 
-# Run the tests: phpcs with the standard on the files in fixtures/
+# Run the tests: phpcs with each standard on its files in fixtures/
 vendor/bin/phpunit
 
 # Check the coding standard of the tests
 vendor/bin/phpcs
 ```
 
-`composer test` runs both. `fixtures/valid/` holds CakePHP 2 code that must pass, and
-`fixtures/invalid/` code with known violations; `tests/RulesetTest.php` lists the sniffs
-expected for each file. The fixtures are outside `tests/` because the `CakePHP` standard skips
+`composer test` runs both. Each standard has its own directory in `fixtures/`, such as
+`fixtures/CakePHP2/`: `valid/` holds CakePHP 2 code that must pass, and `invalid/` code with
+known violations; `tests/RulesetTest.php` lists the sniffs expected for each file. The fixtures are outside `tests/` because the `CakePHP` standard skips
 some sniffs in `tests/`.
