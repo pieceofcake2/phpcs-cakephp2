@@ -9,6 +9,11 @@
   imported names (`use Cake\Model\Model;` and `@param Model $Model`, not `@param \Cake\Model\Model $Model`).
   A `use` statement for a class that only annotations name counts as used. The classes in `config/`
   (`DATABASE_CONFIG`, the schema classes) stay global. `CakePHP2` is unchanged.
+- `CakePHP2Namespaced.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint` in `CakePHP2Namespaced`.
+  It checks the same order of types in annotations (`string|null`), but skips a doc comment that another
+  sniff is rewriting in the same `phpcbf` pass. The original stops `phpcbf` with a fatal error when the class
+  names of an annotation are imported. Exclude the message as
+  `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat`.
 
 ## 1.1.0
 

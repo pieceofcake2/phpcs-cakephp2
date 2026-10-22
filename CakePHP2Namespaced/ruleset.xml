@@ -4,10 +4,16 @@
 
     <!-- Everything that is not about namespaces is the CakePHP2 standard -->
     <rule ref="CakePHP2">
-        <!-- When phpcbf imports a fully qualified class name of an annotation (see ReferenceUsedNamesOnly
-             below), this sniff reads the doc comment in the middle of the change and stops phpcbf with a
-             fatal error. phpcs still reports its messages. -->
-        <exclude name="CakePHP.Commenting.TypeHint" phpcbf-only="true"/>
+        <!-- Replaced by CakePHP2Namespaced.Commenting.TypeHint (see Sniffs/Commenting/TypeHintSniff.php):
+             when phpcbf imports a class name of an annotation, this sniff parses the doc comment in the
+             middle of the change and stops phpcbf with a fatal error. -->
+        <exclude name="CakePHP.Commenting.TypeHint"/>
+    </rule>
+
+    <!-- The order of the types in @param, @return and @var, as CakePHP.Commenting.TypeHint checks it.
+         Like that sniff, it does not check the tests. -->
+    <rule ref="CakePHP2Namespaced.Commenting.TypeHint">
+        <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
 
     <!-- The rules below turn sniffs back on that CakePHP2 excludes for global classes. A message that

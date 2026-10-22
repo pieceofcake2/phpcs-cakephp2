@@ -233,9 +233,19 @@ class CounterBehavior extends ModelBehavior
 アノテーションに完全修飾名を求める `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName`
 は、`CakePHP2` と同じく除外したままです。
 
-`CakePHP.Commenting.TypeHint` (`@param`、`@return`、`@var` の型の順序) は `phpcbf` では実行しません。`phpcbf` が
-アノテーションのクラス名をインポートするとき、この sniff が書き換え途中のドキュメントコメントを読み、`phpcbf` が
-致命的エラーで止まってしまうためです。`phpcs` では報告されるので、そのメッセージは手で直してください。
+<a id="order-of-the-types-in-annotations"></a>
+
+### アノテーションの型の順序
+
+`@param`、`@return`、`@var` の型の順序 (`null|string` ではなく `string|null`) をチェックする
+`CakePHP.Commenting.TypeHint` の代わりに、`CakePHP2Namespaced.Commenting.TypeHint` を使います。チェックする内容は
+同じですが、メッセージは `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat` として報告されるので、除外するときは
+この名前を指定してください。元の sniff と同じく、`tests/` はチェックしません。
+
+元の sniff は、`phpcbf` がアノテーションのクラス名をインポートするときに、`phpcbf` を致命的エラーで止めてしまいます。
+`ReferenceUsedNamesOnly` がドキュメントコメント全体を書き換え、その途中のコメントをこの sniff が解析するためです。
+代わりの sniff は、書き換え中のドキュメントコメントをスキップして `phpcbf` の次の回でチェックするので、`phpcbf` は
+引き続き型を並べ替えます。
 
 <a id="adding-exceptions"></a>
 

@@ -218,10 +218,17 @@ class CounterBehavior extends ModelBehavior
 `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName`,
 which would require fully qualified names in annotations, stays excluded as in `CakePHP2`.
 
-`CakePHP.Commenting.TypeHint` (the order of the types in `@param`, `@return` and `@var`) is not
-run by `phpcbf`. When `phpcbf` imports a class name of an annotation, the sniff reads the doc
-comment in the middle of the change and stops `phpcbf` with a fatal error. `phpcs` still reports
-it; fix those messages by hand.
+### Order of the Types in Annotations
+
+`CakePHP2Namespaced.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint`, which checks the
+order of the types in `@param`, `@return` and `@var` (`string|null`, not `null|string`). It
+checks the same and reports `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat`, so exclude
+it by that name. Like the original, it does not check `tests/`.
+
+The original sniff stops `phpcbf` with a fatal error when `phpcbf` imports a class name of an
+annotation: `ReferenceUsedNamesOnly` rewrites the doc comment as a whole, and the sniff parses
+it in the middle of the change. The replacement skips a doc comment that is being rewritten and
+checks it in the next pass of `phpcbf`, so `phpcbf` still sorts the types.
 
 ## Adding Exceptions
 

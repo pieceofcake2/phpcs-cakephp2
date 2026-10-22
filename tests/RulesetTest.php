@@ -66,6 +66,13 @@ class RulesetTest extends TestCase
                 'invalid/src/Model/Behavior/CounterBehavior.php',
                 ['SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName'],
             ],
+            'fully qualified class name and unsorted types in one doc comment' => [
+                'invalid/src/Model/Behavior/TaggableBehavior.php',
+                [
+                    'CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat',
+                    'SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName',
+                ],
+            ],
             'file not named after its class' => [
                 'invalid/src/Utility/Slugger.php',
                 ['Squiz.Classes.ClassFileName.NoMatch'],
@@ -108,21 +115,45 @@ class RulesetTest extends TestCase
      */
     public function testFixFullyQualifiedNamesInAnnotations(): void
     {
-        $root = dirname(__DIR__);
-        $file = $root . '/fixtures/CakePHP2Namespaced/invalid/src/Model/Behavior/CounterBehavior.php';
-        $command = sprintf(
-            '%s %s -q --standard=CakePHP2Namespaced --stdin-path=%s - < %s 2>&1',
-            escapeshellarg(PHP_BINARY),
-            escapeshellarg($root . '/vendor/bin/phpcbf'),
-            escapeshellarg($file),
-            escapeshellarg($file),
-        );
-        exec($command, $output);
-        $fixed = implode("\n", $output);
+        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/CounterBehavior.php');
 
         $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\nuse InvalidArgumentException;\n", $fixed);
         $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
         $this->assertStringContainsString('@throws InvalidArgumentException When the model has no table', $fixed);
+    }
+
+    /**
+     * phpcbf still sorts the types of a doc comment whose class names it imports in the same run
+     */
+    public function testFixTypesAndNamesInOneDocComment(): void
+    {
+        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/TaggableBehavior.php');
+
+        $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\n", $fixed);
+        $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
+        $this->assertStringContainsString('@param string|null $tag Tag', $fixed);
+    }
+
+    /**
+     * @param string $standard Standard to fix the file with
+     * @param string $file File in fixtures/<standard>/
+     * @return string Fixed content (the file itself is not changed), or the output of phpcbf if it failed
+     */
+    private function fix(string $standard, string $file): string
+    {
+        $root = dirname(__DIR__);
+        $path = $root . '/fixtures/' . $standard . '/' . $file;
+        $command = sprintf(
+            '%s %s -q --standard=%s --stdin-path=%s - < %s 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg($root . '/vendor/bin/phpcbf'),
+            escapeshellarg($standard),
+            escapeshellarg($path),
+            escapeshellarg($path),
+        );
+        exec($command, $output);
+
+        return implode("\n", $output);
     }
 
     /**
