@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CakePHP2Namespaced\Sniffs\Commenting;
+namespace CakePHP2\Sniffs\Commenting;
 
 use CakePHP\Sniffs\Commenting\TypeHintSniff as CakePHPTypeHintSniff;
 use PHP_CodeSniffer\Files\File;

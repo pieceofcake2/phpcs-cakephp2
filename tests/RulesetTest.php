@@ -41,8 +41,16 @@ class RulesetTest extends TestCase
                 'invalid/Model/Post.php',
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
             ],
+            'a use statement that only an annotation needs' => ['valid/Controller/PagesController.php', []],
+            'an unused use statement and types in the wrong order' => [
+                'invalid/Controller/UnusedController.php',
+                [
+                    'CakePHP2.Commenting.TypeHint.IncorrectFormat',
+                    'SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse',
+                ],
+            ],
         ],
-        'CakePHP2Namespaced' => [
+        'CakePHP2Namespace' => [
             'controller with a use statement only for an annotation' => ['valid/src/Controller/PostsController.php', []],
             'model with an imported global exception class' => ['valid/src/Model/Post.php', []],
             'behavior with short class names in annotations' => ['valid/src/Model/Behavior/SluggableBehavior.php', []],
@@ -70,7 +78,7 @@ class RulesetTest extends TestCase
             'fully qualified class name and unsorted types in one doc comment' => [
                 'invalid/src/Model/Behavior/TaggableBehavior.php',
                 [
-                    'CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat',
+                    'CakePHP2.Commenting.TypeHint.IncorrectFormat',
                     'SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName',
                 ],
             ],
@@ -112,7 +120,7 @@ class RulesetTest extends TestCase
      */
     public function testFixFullyQualifiedNamesInAnnotations(): void
     {
-        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/CounterBehavior.php');
+        $fixed = $this->fix('CakePHP2Namespace', 'invalid/src/Model/Behavior/CounterBehavior.php');
 
         $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\nuse InvalidArgumentException;\n", $fixed);
         $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
@@ -124,7 +132,7 @@ class RulesetTest extends TestCase
      */
     public function testFixTypesAndNamesInOneDocComment(): void
     {
-        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/TaggableBehavior.php');
+        $fixed = $this->fix('CakePHP2Namespace', 'invalid/src/Model/Behavior/TaggableBehavior.php');
 
         $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\n", $fixed);
         $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);

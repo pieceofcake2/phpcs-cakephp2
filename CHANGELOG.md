@@ -2,20 +2,26 @@
 
 ## Unreleased
 
-- The `CakePHP2Namespaced` standard, for CakePHP 2 applications and plugins whose classes are in namespaces
+- The standards and their sniffs are in `src/` (`src/CakePHP2`, `src/CakePHP2Namespace`). Composer still registers
+  them with PHP_CodeSniffer, so `<rule ref="CakePHP2"/>` works as before; a `phpcs.xml` that names the old path
+  `vendor/pieceofcake2/phpcs-cakephp2/CakePHP2` must use `vendor/pieceofcake2/phpcs-cakephp2/src/CakePHP2`.
+- The `CakePHP2Namespace` standard, for CakePHP 2 applications and plugins whose classes are in namespaces
   (`App\Controller\PostsController`), as CakePHP 2.13 allows. It is the `CakePHP2` standard with the
   namespace rules turned back on: classes need a namespace, a class file must not call `App::uses()` (or
   have other side effects) and must be named after its class, and annotations name classes by their short,
   imported names (`use Cake\Model\Model;` and `@param Model $Model`, not `@param \Cake\Model\Model $Model`).
-  A `use` statement for a class that only annotations name counts as used. The classes in `config/`
-  (`DATABASE_CONFIG`, the schema classes) stay global. `CakePHP2` is unchanged.
+  The classes in `config/` (`DATABASE_CONFIG`, the schema classes) stay global. `CakePHP2` keeps the
+  rules for global classes.
   `ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace` stays excluded, because its fix in
   `phpcbf` turns `#[\AllowDynamicProperties]` in a file without a namespace into `[AllowDynamicProperties]`.
-- `CakePHP2Namespaced.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint` in `CakePHP2Namespaced`.
-  It checks the same order of types in annotations (`string|null`), but skips a doc comment that another
-  sniff is rewriting in the same `phpcbf` pass. The original stops `phpcbf` with a fatal error when the class
-  names of an annotation are imported. Exclude the message as
-  `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat`.
+- `CakePHP2`: a `use` statement for a class that only annotations name (`@property`, `@param`, `@return`)
+  counts as used (`UnusedUses` with `searchAnnotations`), since applications import the namespaced core
+  classes of CakePHP 2.13. `CakePHP2Namespace` gets it from `CakePHP2`.
+- `CakePHP2.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint` in both standards. It checks the
+  same order of types in annotations (`string|null`), but skips a doc comment that another sniff is
+  rewriting in the same `phpcbf` pass; `phpcbf` checks it again in the next pass. The original stops
+  `phpcbf` with a fatal error in that case, e.g. when the class names of an annotation are imported. Exclude
+  the message as `CakePHP2.Commenting.TypeHint.IncorrectFormat`.
 
 ## 1.1.0
 

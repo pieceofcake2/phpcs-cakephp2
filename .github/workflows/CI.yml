@@ -61,7 +61,7 @@ jobs:
       - name: Check that the standards are registered
         run: |
           vendor/bin/phpcs -i | grep -qw CakePHP2
-          vendor/bin/phpcs -i | grep -qw CakePHP2Namespaced
+          vendor/bin/phpcs -i | grep -qw CakePHP2Namespace
 
   phpunit:
     runs-on: ubuntu-latest

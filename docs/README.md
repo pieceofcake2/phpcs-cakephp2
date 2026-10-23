@@ -6,7 +6,7 @@ CakePHP 2 applications and plugins running on
 [pieceofcake2/cakephp](https://github.com/pieceofcake2/cakephp). It builds on the `CakePHP`
 standard of [cakephp/cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer) 5.x,
 the coding standard of current CakePHP, and only adds the exceptions that CakePHP 2 code needs.
-A second standard, `CakePHP2Namespaced`, is for code whose classes are in namespaces.
+A second standard, `CakePHP2Namespace`, is for code whose classes are in namespaces.
 
 The package does not fork cakephp/cakephp-codesniffer. It depends on it and references its
 `CakePHP` standard, so new and fixed sniffs arrive with a normal `composer update`.
@@ -15,7 +15,7 @@ The package does not fork cakephp/cakephp-codesniffer. It depends on it and refe
 - [Choosing a Standard](#choosing-a-standard)
 - [Configuration](#configuration)
 - [Rules](#rules)
-- [CakePHP2Namespaced](#cakephp2namespaced)
+- [CakePHP2Namespace](#cakephp2namespace)
 - [Adding Exceptions](#adding-exceptions)
 - [Migrating from a CakePHP-Based phpcs.xml](#migrating-from-a-cakephp-based-phpcsxml)
 - [Development](#development)
@@ -30,7 +30,7 @@ composer require --dev pieceofcake2/phpcs-cakephp2
 
 It installs PHP_CodeSniffer, cakephp/cakephp-codesniffer and the
 [dealerdirect/phpcodesniffer-composer-installer](https://github.com/PHPCSStandards/composer-installer)
-plugin, which registers the `CakePHP2`, `CakePHP2Namespaced` and `CakePHP` standards with PHP_CodeSniffer. Composer
+plugin, which registers the `CakePHP2`, `CakePHP2Namespace` and `CakePHP` standards with PHP_CodeSniffer. Composer
 asks whether to allow the plugin. Allow it, or add it to `composer.json` yourself:
 
 ```json
@@ -47,7 +47,7 @@ Check that the standard is registered:
 
 ```bash
 vendor/bin/phpcs -i
-# The installed coding standards are ..., CakePHP2, CakePHP2Namespaced, CakePHP and SlevomatCodingStandard
+# The installed coding standards are ..., CakePHP2, CakePHP2Namespace, CakePHP and SlevomatCodingStandard
 ```
 
 Run PHP_CodeSniffer on PHP 8.1 or later. The package can be installed on PHP 8.0 too, so that
@@ -67,13 +67,13 @@ The package has two standards. They differ only in the rules about namespaces.
   PostsController extends AppController` without a namespace, loaded with `App::uses()` or the
   class map of Composer. This is the original layout (`app/Controller/`) and the layout of
   pieceofcake2/app (`src/Controller/`) alike.
-- `CakePHP2Namespaced` is for code whose classes are in namespaces, which CakePHP 2.13 allows:
+- `CakePHP2Namespace` is for code whose classes are in namespaces, which CakePHP 2.13 allows:
   `namespace App\Controller;`, `use` statements and the PSR-4 autoloading of Composer. It
   reports a class without a namespace, `App::uses()` in a class file and a class file that is
-  not named after its class. See [CakePHP2Namespaced](#cakephp2namespaced).
+  not named after its class. See [CakePHP2Namespace](#cakephp2namespace).
 
 Keep `CakePHP2` while an application or plugin still has global classes, and switch to
-`CakePHP2Namespaced` once its classes are in namespaces.
+`CakePHP2Namespace` once its classes are in namespaces.
 
 ## Configuration
 
@@ -101,10 +101,10 @@ For an application with the directory layout of pieceofcake2/app (`config/`, `sr
 </ruleset>
 ```
 
-For an application whose classes are in namespaces, reference `CakePHP2Namespaced` instead:
+For an application whose classes are in namespaces, reference `CakePHP2Namespace` instead:
 
 ```xml
-<rule ref="CakePHP2Namespaced"/>
+<rule ref="CakePHP2Namespace"/>
 ```
 
 For an application with the original layout, list the directories under `app/` instead, for
@@ -156,17 +156,19 @@ unchanged.
 | --- | --- |
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: aligned assignments may have at most one extra space. |
 | `CakePHP2.TypeHints.TestReturnTypeHint` | In `*/tests/TestCase/*` and `*/Test/Case/*`, every method and function needs a native return type: `setUp(): void`, `testFoo(): void`, `fooProvider(): array`. PHPUnit declares its template methods with native types, and test methods are only called by PHPUnit, so the tests can use them although the rest of CakePHP 2 code does not. `phpcbf` adds `: void` to methods that return nothing. Constructors are not checked. (The `CakePHP` standard does not check return types in `tests/` at all.) |
+| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: a `use` statement for a class that only annotations name, such as `@return CakeResponse\|null` after `use Cake\Network\CakeResponse;`, counts as used. Applications import the namespaced core classes of CakePHP 2.13 even when their own classes are global. |
+| `CakePHP2.Commenting.TypeHint` | Replaces `CakePHP.Commenting.TypeHint`: see [Order of the Types in Annotations](#order-of-the-types-in-annotations). |
 
-## CakePHP2Namespaced
+## CakePHP2Namespace
 
-`CakePHP2Namespaced` is the `CakePHP2` standard with the following changes. It references
+`CakePHP2Namespace` is the `CakePHP2` standard with the following changes. It references
 `CakePHP2`, so everything else (no native types outside the tests, variables named after models,
 underscored members, the exceptions for controllers, shells, behaviors and tests, formatting)
 is the same.
 
 ### Checked Again
 
-`CakePHP2` excludes these sniffs because its classes are global. `CakePHP2Namespaced` checks them.
+`CakePHP2` excludes these sniffs because its classes are global. `CakePHP2Namespace` checks them.
 
 | Sniff | Not checked in | Why |
 | --- | --- | --- |
@@ -217,26 +219,27 @@ class CounterBehavior extends ModelBehavior
 | Sniff | Setting |
 | --- | --- |
 | `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` | `searchAnnotations` true: fully qualified names in annotations, such as `@param \Cake\Model\Model $Model` or `@throws \InvalidArgumentException`, are reported like the ones in the code. Global classes are imported too (`use InvalidArgumentException;`), as the `CakePHP` standard requires in the code. `phpcbf` adds the `use` statements and writes the short names. |
-| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: a `use` statement for a class that only annotations name, such as `@property Post $Post` of a controller, counts as used. |
 
 `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName`,
-which would require fully qualified names in annotations, stays excluded as in `CakePHP2`.
+which would require fully qualified names in annotations, stays excluded as in `CakePHP2`. A `use`
+statement that only annotations need counts as used, as in `CakePHP2`.
 
 ### Order of the Types in Annotations
 
-`CakePHP2Namespaced.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint`, which checks the
-order of the types in `@param`, `@return` and `@var` (`string|null`, not `null|string`). It
-checks the same and reports `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat`, so exclude
-it by that name. Like the original, it does not check `tests/`.
+Both standards use `CakePHP2.Commenting.TypeHint` instead of `CakePHP.Commenting.TypeHint`, which
+checks the order of the types in `@param`, `@return` and `@var` (`string|null`, not `null|string`).
+It checks the same and reports `CakePHP2.Commenting.TypeHint.IncorrectFormat`, so exclude it by that
+name. Like the original, it does not check `tests/`.
 
-The original sniff stops `phpcbf` with a fatal error when `phpcbf` imports a class name of an
-annotation: `ReferenceUsedNamesOnly` rewrites the doc comment as a whole, and the sniff parses
-it in the middle of the change. The replacement skips a doc comment that is being rewritten and
+The original sniff stops `phpcbf` with a fatal error when another sniff rewrites a doc comment in
+the same pass, e.g. when `phpcbf` imports a class name of an annotation in `CakePHP2Namespace`
+(`ReferenceUsedNamesOnly` rewrites the doc comment as a whole, and the sniff parses it in the middle
+of the change). The replacement skips a doc comment that is being rewritten and
 checks it in the next pass of `phpcbf`, so `phpcbf` still sorts the types.
 
 ## Adding Exceptions
 
-Add project-specific exceptions after the standard (`CakePHP2` or `CakePHP2Namespaced`). To keep a sniff away from some files:
+Add project-specific exceptions after the standard (`CakePHP2` or `CakePHP2Namespace`). To keep a sniff away from some files:
 
 ```xml
 <rule ref="CakePHP2"/>
