@@ -173,7 +173,11 @@ is the same.
 | `PSR1.Classes.ClassDeclaration.MissingNamespace` | `*/config/*` | Classes are declared in a namespace. The configuration files keep their global classes: `DATABASE_CONFIG` and the schema classes in `config/Schema/`. |
 | `PSR1.Files.SideEffects.FoundWithSymbols` | — | Composer loads the classes, so a class file needs no `App::uses()`. (The `CakePHP` standard does not check `config/` and `tests/`.) |
 | `Squiz.Classes.ClassFileName.NoMatch` | `*/config/*`, `*/tests/TestCase/*`, `*/Test/Case/*` | PSR-4 finds a class only in the file named after it. The configuration files keep their names, and test files may declare test doubles. |
-| `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace` | — | In the files without a namespace, such as the configuration files and the templates, global names are written without the leading `\`: `Exception`, not `\Exception`. |
+
+`SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace`
+stays excluded as in `CakePHP2`, so the files without a namespace, such as the configuration
+files and the templates, may still write `\Exception`. Its fix in `phpcbf` breaks attributes
+there: `#[\AllowDynamicProperties]` becomes `[AllowDynamicProperties]`, which does not parse.
 
 ### Class Names in Annotations
 

@@ -48,8 +48,9 @@ class RulesetTest extends TestCase
             'behavior with short class names in annotations' => ['valid/src/Model/Behavior/SluggableBehavior.php', []],
             'shell with a class in the same namespace' => ['valid/src/Console/Command/ReportShell.php', []],
             'test case with a test double' => ['valid/tests/TestCase/Model/PostTest.php', []],
-            'global DATABASE_CONFIG' => ['valid/config/database.php', []],
+            'global DATABASE_CONFIG with a fully qualified attribute' => ['valid/config/database.php', []],
             'global schema class' => ['valid/config/Schema/schema.php', []],
+            'fully qualified global class in a file without a namespace' => ['valid/config/bootstrap.php', []],
             'class without a namespace' => [
                 'invalid/src/Model/Post.php',
                 ['PSR1.Classes.ClassDeclaration.MissingNamespace'],
@@ -76,10 +77,6 @@ class RulesetTest extends TestCase
             'file not named after its class' => [
                 'invalid/src/Utility/Slugger.php',
                 ['Squiz.Classes.ClassFileName.NoMatch'],
-            ],
-            'leading backslash in a file without a namespace' => [
-                'invalid/config/bootstrap.php',
-                ['SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace'],
             ],
         ],
     ];

@@ -2,6 +2,7 @@
 /**
  * Datasource configuration
  */
+#[\AllowDynamicProperties]
 class DATABASE_CONFIG
 {
     /**

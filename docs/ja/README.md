@@ -186,7 +186,11 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 | `PSR1.Classes.ClassDeclaration.MissingNamespace` | `*/config/*` | クラスは名前空間の中で宣言します。設定ファイルのクラスはグローバルのままです: `DATABASE_CONFIG` と `config/Schema/` のスキーマクラス。 |
 | `PSR1.Files.SideEffects.FoundWithSymbols` | — | クラスは Composer が読み込むので、クラスファイルに `App::uses()` は必要ありません (`CakePHP` 規約は `config/` と `tests/` をチェックしません)。 |
 | `Squiz.Classes.ClassFileName.NoMatch` | `*/config/*`、`*/tests/TestCase/*`、`*/Test/Case/*` | PSR-4 は、クラス名と同じ名前のファイルからしかクラスを読み込めません。設定ファイルの名前はそのままで、テストファイルではテストダブルを宣言してもかまいません。 |
-| `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace` | — | 設定ファイルやテンプレートなど名前空間のないファイルでは、グローバルな名前を先頭の `\` なしで書きます: `\Exception` ではなく `Exception`。 |
+
+`SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace` は `CakePHP2`
+と同じく除外したままなので、設定ファイルやテンプレートなど名前空間のないファイルでは、引き続き `\Exception` と書けます。
+この sniff を `phpcbf` で直すと、そうしたファイルの属性が壊れてしまうためです。`#[\AllowDynamicProperties]` が
+`[AllowDynamicProperties]` になり、構文エラーになります。
 
 <a id="class-names-in-annotations"></a>
 

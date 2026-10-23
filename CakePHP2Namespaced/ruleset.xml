@@ -40,11 +40,9 @@
     </rule>
 
     <!-- ===== Namespace/Import Rules ===== -->
-    <!-- In the files without a namespace (configuration, templates), global names such as Exception
-         are written without the leading \ -->
-    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace">
-        <severity>5</severity>
-    </rule>
+    <!-- ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace stays excluded as in CakePHP2:
+         in the files without a namespace (configuration, templates), phpcbf would turn #[\AllowDynamicProperties]
+         into [AllowDynamicProperties], which does not parse. -->
     <!-- Annotations name classes like the code does: imported with use and written by their short names
          (@param Model $Model, not @param \Cake\Model\Model $Model). This includes global classes
          (use Exception; and @throws Exception). FullyQualifiedClassNameInAnnotation stays excluded. -->
