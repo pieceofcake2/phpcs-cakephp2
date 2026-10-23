@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The standards and their sniffs are in `src/` (`src/CakePHP2`, `src/CakePHP2Namespace`). Composer still registers
+  them with PHP_CodeSniffer, so `<rule ref="CakePHP2"/>` works as before; a `phpcs.xml` that names the old path
+  `vendor/pieceofcake2/phpcs-cakephp2/CakePHP2` must use `vendor/pieceofcake2/phpcs-cakephp2/src/CakePHP2`.
 - The `CakePHP2Namespace` standard, for CakePHP 2 applications and plugins whose classes are in namespaces
   (`App\Controller\PostsController`), as CakePHP 2.13 allows. It is the `CakePHP2` standard with the
   namespace rules turned back on: classes need a namespace, a class file must not call `App::uses()` (or
