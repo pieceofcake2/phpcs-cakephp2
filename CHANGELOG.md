@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.2.0
 
 - The standards and their sniffs are in `src/` (`src/CakePHP2`, `src/CakePHP2Namespace`). Composer still registers
   them with PHP_CodeSniffer, so `<rule ref="CakePHP2"/>` works as before; a `phpcs.xml` that names the old path
