@@ -6,18 +6,19 @@ namespace PieceOfCake2\PhpcsCakePHP2\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Runs phpcs with the CakePHP2 standard on the files in fixtures/ and compares the reported sniffs.
+ * Runs phpcs with each standard on its files in fixtures/ and compares the reported sniffs.
  *
- * fixtures/valid holds CakePHP 2 code that must pass; fixtures/invalid holds code with known violations.
+ * fixtures/<standard>/valid holds code that must pass; fixtures/<standard>/invalid holds code with known violations.
  */
 class RulesetTest extends TestCase
 {
     /**
-     * @return array<string, array{string, list<string>}>
+     * Files per standard, with the sniff codes expected for each file
+     *
+     * @var array<string, array<string, array{string, list<string>}>>
      */
-    public static function fileProvider(): array
-    {
-        return [
+    private const FILES = [
+        'CakePHP2' => [
             'controller actions with underscores' => ['valid/Controller/PostsController.php', []],
             'behavior callbacks' => ['valid/Model/Behavior/SluggableBehavior.php', []],
             'shell with assignment in condition' => ['valid/Console/Command/ReportShell.php', []],
@@ -40,31 +41,132 @@ class RulesetTest extends TestCase
                 'invalid/Model/Post.php',
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
             ],
-        ];
+        ],
+        'CakePHP2Namespaced' => [
+            'controller with a use statement only for an annotation' => ['valid/src/Controller/PostsController.php', []],
+            'model with an imported global exception class' => ['valid/src/Model/Post.php', []],
+            'behavior with short class names in annotations' => ['valid/src/Model/Behavior/SluggableBehavior.php', []],
+            'shell with a class in the same namespace' => ['valid/src/Console/Command/ReportShell.php', []],
+            'test case with a test double' => ['valid/tests/TestCase/Model/PostTest.php', []],
+            'global DATABASE_CONFIG with a fully qualified attribute' => ['valid/config/database.php', []],
+            'global schema class' => ['valid/config/Schema/schema.php', []],
+            'fully qualified global class in a file without a namespace' => ['valid/config/bootstrap.php', []],
+            'class without a namespace' => [
+                'invalid/src/Model/Post.php',
+                ['PSR1.Classes.ClassDeclaration.MissingNamespace'],
+            ],
+            'App::uses() next to a class' => [
+                'invalid/src/Model/Comment.php',
+                ['PSR1.Files.SideEffects.FoundWithSymbols'],
+            ],
+            'unused use statement' => [
+                'invalid/src/Controller/CommentsController.php',
+                ['SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse'],
+            ],
+            'fully qualified class names in annotations' => [
+                'invalid/src/Model/Behavior/CounterBehavior.php',
+                ['SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName'],
+            ],
+            'fully qualified class name and unsorted types in one doc comment' => [
+                'invalid/src/Model/Behavior/TaggableBehavior.php',
+                [
+                    'CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat',
+                    'SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName',
+                ],
+            ],
+            'file not named after its class' => [
+                'invalid/src/Utility/Slugger.php',
+                ['Squiz.Classes.ClassFileName.NoMatch'],
+            ],
+        ],
+    ];
+
+    /**
+     * @return array<string, array{string, string, list<string>}>
+     */
+    public static function fileProvider(): array
+    {
+        $cases = [];
+        foreach (self::FILES as $standard => $files) {
+            foreach ($files as $name => [$file, $expected]) {
+                $cases[$standard . ': ' . $name] = [$standard, $file, $expected];
+            }
+        }
+
+        return $cases;
     }
 
     /**
-     * @param string $file File in fixtures/
+     * @param string $standard Standard to check the file with
+     * @param string $file File in fixtures/<standard>/
      * @param list<string> $expected Sniff codes expected to be reported
      * @dataProvider fileProvider
      */
-    public function testFile(string $file, array $expected): void
+    public function testFile(string $standard, string $file, array $expected): void
     {
-        $this->assertSame($expected, $this->sniff($file));
+        $this->assertSame($expected, $this->sniff($standard, $file));
     }
 
     /**
-     * @param string $file File in fixtures/
+     * phpcbf imports the fully qualified class names of annotations and writes their short names
+     */
+    public function testFixFullyQualifiedNamesInAnnotations(): void
+    {
+        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/CounterBehavior.php');
+
+        $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\nuse InvalidArgumentException;\n", $fixed);
+        $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
+        $this->assertStringContainsString('@throws InvalidArgumentException When the model has no table', $fixed);
+    }
+
+    /**
+     * phpcbf still sorts the types of a doc comment whose class names it imports in the same run
+     */
+    public function testFixTypesAndNamesInOneDocComment(): void
+    {
+        $fixed = $this->fix('CakePHP2Namespaced', 'invalid/src/Model/Behavior/TaggableBehavior.php');
+
+        $this->assertStringContainsString("use Cake\\Model\\Model;\nuse Cake\\Model\\ModelBehavior;\n", $fixed);
+        $this->assertStringContainsString('@param Model $Model Model using this behavior', $fixed);
+        $this->assertStringContainsString('@param string|null $tag Tag', $fixed);
+    }
+
+    /**
+     * @param string $standard Standard to fix the file with
+     * @param string $file File in fixtures/<standard>/
+     * @return string Fixed content (the file itself is not changed), or the output of phpcbf if it failed
+     */
+    private function fix(string $standard, string $file): string
+    {
+        $root = dirname(__DIR__);
+        $path = $root . '/fixtures/' . $standard . '/' . $file;
+        $command = sprintf(
+            '%s %s -q --standard=%s --stdin-path=%s - < %s 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg($root . '/vendor/bin/phpcbf'),
+            escapeshellarg($standard),
+            escapeshellarg($path),
+            escapeshellarg($path),
+        );
+        exec($command, $output);
+
+        return implode("\n", $output);
+    }
+
+    /**
+     * @param string $standard Standard to check the file with
+     * @param string $file File in fixtures/<standard>/
      * @return list<string> Sorted, unique sniff codes reported for the file
      */
-    private function sniff(string $file): array
+    private function sniff(string $standard, string $file): array
     {
         $root = dirname(__DIR__);
         $command = sprintf(
-            '%s %s -q --standard=CakePHP2 --report=json --no-cache %s',
+            '%s %s -q --standard=%s --report=json --no-cache %s',
             escapeshellarg(PHP_BINARY),
             escapeshellarg($root . '/vendor/bin/phpcs'),
-            escapeshellarg($root . '/fixtures/' . $file),
+            escapeshellarg($standard),
+            escapeshellarg($root . '/fixtures/' . $standard . '/' . $file),
         );
         exec($command, $output);
         $report = json_decode(implode("\n", $output), true, flags: JSON_THROW_ON_ERROR);

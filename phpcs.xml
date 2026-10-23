@@ -6,6 +6,7 @@
 
     <!-- fixtures/ is checked by the tests -->
     <file>CakePHP2</file>
+    <file>CakePHP2Namespaced</file>
     <file>tests</file>
 
     <rule ref="CakePHP"/>

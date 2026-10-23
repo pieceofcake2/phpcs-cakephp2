@@ -13,6 +13,14 @@ exceptions that CakePHP 2 code needs: no namespaces, `App::uses()`, underscored 
 actions, `DATABASE_CONFIG` and no native types in signatures. The CakePHP rules are used as
 they are, not copied, so their updates arrive with cakephp/cakephp-codesniffer.
 
+The package has two standards:
+
+- `CakePHP2` for code with global classes, the way CakePHP 2 has always worked
+  (`App::uses()`, no namespaces).
+- `CakePHP2Namespaced` for code whose classes are in namespaces, as CakePHP 2.13 allows
+  (`namespace App\Controller;`, `use` statements, PSR-4). It is `CakePHP2` with the namespace
+  rules turned back on, and with class names in annotations imported like in the code.
+
 ## Documentation
 
 - Website: https://pieceofcake2.github.io/phpcs-cakephp2/ (日本語: https://pieceofcake2.github.io/phpcs-cakephp2/ja/)
@@ -43,6 +51,8 @@ the standard in your `phpcs.xml`:
     <rule ref="CakePHP2"/>
 </ruleset>
 ```
+
+If your classes are in namespaces, use `<rule ref="CakePHP2Namespaced"/>` instead.
 
 ## Contributing
 
