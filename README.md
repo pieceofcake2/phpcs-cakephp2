@@ -17,7 +17,7 @@ The package has two standards:
 
 - `CakePHP2` for code with global classes, the way CakePHP 2 has always worked
   (`App::uses()`, no namespaces).
-- `CakePHP2Namespaced` for code whose classes are in namespaces, as CakePHP 2.13 allows
+- `CakePHP2Namespace` for code whose classes are in namespaces, as CakePHP 2.13 allows
   (`namespace App\Controller;`, `use` statements, PSR-4). It is `CakePHP2` with the namespace
   rules turned back on, and with class names in annotations imported like in the code.
 
@@ -52,7 +52,7 @@ the standard in your `phpcs.xml`:
 </ruleset>
 ```
 
-If your classes are in namespaces, use `<rule ref="CakePHP2Namespaced"/>` instead.
+If your classes are in namespaces, use `<rule ref="CakePHP2Namespace"/>` instead.
 
 ## Contributing
 

@@ -5,7 +5,7 @@ CakePHP 2 のアプリケーションとプラグインのための
 [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) のコーディング規約 `CakePHP2` です。
 現在の CakePHP のコーディング規約である [cakephp/cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer) 5.x の
 `CakePHP` 規約をベースにしており、CakePHP 2 のコードに必要な例外だけを追加しています。
-クラスを名前空間に置くコードには、もう一つの規約 `CakePHP2Namespaced` を使います。
+クラスを名前空間に置くコードには、もう一つの規約 `CakePHP2Namespace` を使います。
 
 このパッケージは cakephp/cakephp-codesniffer をフォークしていません。cakephp/cakephp-codesniffer に依存し、その `CakePHP`
 規約を参照しているので、新しい sniff や修正された sniff は通常の `composer update` で取り込まれます。
@@ -14,7 +14,7 @@ CakePHP 2 のアプリケーションとプラグインのための
 - [規約の選び方](#choosing-a-standard)
 - [設定](#configuration)
 - [ルール](#rules)
-- [CakePHP2Namespaced](#cakephp2namespaced)
+- [CakePHP2Namespace](#cakephp2namespace)
 - [例外の追加](#adding-exceptions)
 - [CakePHP ベースの phpcs.xml からの移行](#migrating-from-a-cakephp-based-phpcsxml)
 - [開発](#development)
@@ -31,7 +31,7 @@ composer require --dev pieceofcake2/phpcs-cakephp2
 
 これにより、PHP_CodeSniffer、cakephp/cakephp-codesniffer と
 [dealerdirect/phpcodesniffer-composer-installer](https://github.com/PHPCSStandards/composer-installer)
-プラグインがインストールされます。このプラグインは `CakePHP2`、`CakePHP2Namespaced`、`CakePHP` の各規約を PHP_CodeSniffer に登録します。
+プラグインがインストールされます。このプラグインは `CakePHP2`、`CakePHP2Namespace`、`CakePHP` の各規約を PHP_CodeSniffer に登録します。
 Composer はプラグインを許可するか尋ねます。許可するか、自分で `composer.json` に追加してください。
 
 ```json
@@ -48,7 +48,7 @@ Composer はプラグインを許可するか尋ねます。許可するか、�
 
 ```bash
 vendor/bin/phpcs -i
-# The installed coding standards are ..., CakePHP2, CakePHP2Namespaced, CakePHP and SlevomatCodingStandard
+# The installed coding standards are ..., CakePHP2, CakePHP2Namespace, CakePHP and SlevomatCodingStandard
 ```
 
 PHP_CodeSniffer は PHP 8.1 以降で実行してください。プロジェクトの PHP 8.0 のテストジョブで `composer install` が
@@ -68,13 +68,13 @@ cakephp/cakephp-codesniffer 5.1.0 にフォールバックし、その `CakePHP`
 - `CakePHP2` は、これまでの CakePHP 2 と同じく、クラスがグローバルなコードのための規約です。名前空間のない
   `class PostsController extends AppController` を、`App::uses()` や Composer のクラスマップで読み込みます。
   元の構成 (`app/Controller/`) でも、pieceofcake2/app の構成 (`src/Controller/`) でも同じです。
-- `CakePHP2Namespaced` は、CakePHP 2.13 からできるようになった、クラスを名前空間に置くコードのための規約です。
+- `CakePHP2Namespace` は、CakePHP 2.13 からできるようになった、クラスを名前空間に置くコードのための規約です。
   `namespace App\Controller;` と `use` 文を書き、Composer の PSR-4 オートロードでクラスを読み込みます。
   名前空間のないクラス、クラスファイルの中の `App::uses()`、クラス名と違う名前のクラスファイルを報告します。
-  [CakePHP2Namespaced](#cakephp2namespaced) をご覧ください。
+  [CakePHP2Namespace](#cakephp2namespace) をご覧ください。
 
 アプリケーションやプラグインにグローバルなクラスが残っている間は `CakePHP2` を使い、クラスを名前空間に移し終えたら
-`CakePHP2Namespaced` に切り替えてください。
+`CakePHP2Namespace` に切り替えてください。
 
 <a id="configuration"></a>
 
@@ -104,10 +104,10 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 </ruleset>
 ```
 
-クラスを名前空間に置くアプリケーションでは、代わりに `CakePHP2Namespaced` を参照します。
+クラスを名前空間に置くアプリケーションでは、代わりに `CakePHP2Namespace` を参照します。
 
 ```xml
-<rule ref="CakePHP2Namespaced"/>
+<rule ref="CakePHP2Namespace"/>
 ```
 
 元の構成のアプリケーションでは、代わりに `app/` 以下のディレクトリを列挙します。たとえば `./app/Config`、
@@ -167,11 +167,11 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: 揃えた代入に追加できる空白は最大 1 つです。 |
 | `CakePHP2.TypeHints.TestReturnTypeHint` | `*/tests/TestCase/*` と `*/Test/Case/*` では、すべてのメソッドと関数にネイティブの戻り値の型が必要です: `setUp(): void`、`testFoo(): void`、`fooProvider(): array`。PHPUnit はテンプレートメソッドをネイティブの型で宣言しており、テストメソッドを呼ぶのは PHPUnit だけなので、CakePHP 2 のほかのコードと違ってテストでは使えます。何も返さないメソッドには `phpcbf` が `: void` を追加します。コンストラクターはチェックしません (`CakePHP` 規約は `tests/` では戻り値の型をまったくチェックしません)。 |
 
-<a id="cakephp2namespaced"></a>
+<a id="cakephp2namespace"></a>
 
-## CakePHP2Namespaced
+## CakePHP2Namespace
 
-`CakePHP2Namespaced` は、`CakePHP2` 規約に次の変更を加えたものです。`CakePHP2` を参照しているので、それ以外
+`CakePHP2Namespace` は、`CakePHP2` 規約に次の変更を加えたものです。`CakePHP2` を参照しているので、それ以外
 (テスト以外ではネイティブの型を使わないこと、モデル名の変数、アンダースコア付きのメンバー、コントローラー、シェル、
 ビヘイビア、テストに対する例外、書式) は同じです。
 
@@ -179,7 +179,7 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 
 ### 再びチェックするもの
 
-`CakePHP2` はクラスがグローバルなので次の sniff を除外していますが、`CakePHP2Namespaced` はチェックします。
+`CakePHP2` はクラスがグローバルなので次の sniff を除外していますが、`CakePHP2Namespace` はチェックします。
 
 | Sniff | チェックしない場所 | 理由 |
 | --- | --- | --- |
@@ -242,8 +242,8 @@ class CounterBehavior extends ModelBehavior
 ### アノテーションの型の順序
 
 `@param`、`@return`、`@var` の型の順序 (`null|string` ではなく `string|null`) をチェックする
-`CakePHP.Commenting.TypeHint` の代わりに、`CakePHP2Namespaced.Commenting.TypeHint` を使います。チェックする内容は
-同じですが、メッセージは `CakePHP2Namespaced.Commenting.TypeHint.IncorrectFormat` として報告されるので、除外するときは
+`CakePHP.Commenting.TypeHint` の代わりに、`CakePHP2Namespace.Commenting.TypeHint` を使います。チェックする内容は
+同じですが、メッセージは `CakePHP2Namespace.Commenting.TypeHint.IncorrectFormat` として報告されるので、除外するときは
 この名前を指定してください。元の sniff と同じく、`tests/` はチェックしません。
 
 元の sniff は、`phpcbf` がアノテーションのクラス名をインポートするときに、`phpcbf` を致命的エラーで止めてしまいます。
@@ -255,7 +255,7 @@ class CounterBehavior extends ModelBehavior
 
 ## 例外の追加
 
-プロジェクト固有の例外は、規約 (`CakePHP2` または `CakePHP2Namespaced`) の後に追加します。一部のファイルで sniff を無効にするには、次のようにします。
+プロジェクト固有の例外は、規約 (`CakePHP2` または `CakePHP2Namespace`) の後に追加します。一部のファイルで sniff を無効にするには、次のようにします。
 
 ```xml
 <rule ref="CakePHP2"/>
