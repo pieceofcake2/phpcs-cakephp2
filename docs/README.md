@@ -156,6 +156,8 @@ unchanged.
 | --- | --- |
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: aligned assignments may have at most one extra space. |
 | `CakePHP2.TypeHints.TestReturnTypeHint` | In `*/tests/TestCase/*` and `*/Test/Case/*`, every method and function needs a native return type: `setUp(): void`, `testFoo(): void`, `fooProvider(): array`. PHPUnit declares its template methods with native types, and test methods are only called by PHPUnit, so the tests can use them although the rest of CakePHP 2 code does not. `phpcbf` adds `: void` to methods that return nothing. Constructors are not checked. (The `CakePHP` standard does not check return types in `tests/` at all.) |
+| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: a `use` statement for a class that only annotations name, such as `@return CakeResponse\|null` after `use Cake\Network\CakeResponse;`, counts as used. Applications import the namespaced core classes of CakePHP 2.13 even when their own classes are global. |
+| `CakePHP2.Commenting.TypeHint` | Replaces `CakePHP.Commenting.TypeHint`: see [Order of the Types in Annotations](#order-of-the-types-in-annotations). |
 
 ## CakePHP2Namespace
 
@@ -217,21 +219,22 @@ class CounterBehavior extends ModelBehavior
 | Sniff | Setting |
 | --- | --- |
 | `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` | `searchAnnotations` true: fully qualified names in annotations, such as `@param \Cake\Model\Model $Model` or `@throws \InvalidArgumentException`, are reported like the ones in the code. Global classes are imported too (`use InvalidArgumentException;`), as the `CakePHP` standard requires in the code. `phpcbf` adds the `use` statements and writes the short names. |
-| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: a `use` statement for a class that only annotations name, such as `@property Post $Post` of a controller, counts as used. |
 
 `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName`,
-which would require fully qualified names in annotations, stays excluded as in `CakePHP2`.
+which would require fully qualified names in annotations, stays excluded as in `CakePHP2`. A `use`
+statement that only annotations need counts as used, as in `CakePHP2`.
 
 ### Order of the Types in Annotations
 
-`CakePHP2Namespace.Commenting.TypeHint` replaces `CakePHP.Commenting.TypeHint`, which checks the
-order of the types in `@param`, `@return` and `@var` (`string|null`, not `null|string`). It
-checks the same and reports `CakePHP2Namespace.Commenting.TypeHint.IncorrectFormat`, so exclude
-it by that name. Like the original, it does not check `tests/`.
+Both standards use `CakePHP2.Commenting.TypeHint` instead of `CakePHP.Commenting.TypeHint`, which
+checks the order of the types in `@param`, `@return` and `@var` (`string|null`, not `null|string`).
+It checks the same and reports `CakePHP2.Commenting.TypeHint.IncorrectFormat`, so exclude it by that
+name. Like the original, it does not check `tests/`.
 
-The original sniff stops `phpcbf` with a fatal error when `phpcbf` imports a class name of an
-annotation: `ReferenceUsedNamesOnly` rewrites the doc comment as a whole, and the sniff parses
-it in the middle of the change. The replacement skips a doc comment that is being rewritten and
+The original sniff stops `phpcbf` with a fatal error when another sniff rewrites a doc comment in
+the same pass, e.g. when `phpcbf` imports a class name of an annotation in `CakePHP2Namespace`
+(`ReferenceUsedNamesOnly` rewrites the doc comment as a whole, and the sniff parses it in the middle
+of the change). The replacement skips a doc comment that is being rewritten and
 checks it in the next pass of `phpcbf`, so `phpcbf` still sorts the types.
 
 ## Adding Exceptions

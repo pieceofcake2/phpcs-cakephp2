@@ -3,18 +3,7 @@
     <description>The CakePHP2 standard for CakePHP 2 applications and plugins whose classes are in namespaces</description>
 
     <!-- Everything that is not about namespaces is the CakePHP2 standard -->
-    <rule ref="CakePHP2">
-        <!-- Replaced by CakePHP2Namespace.Commenting.TypeHint (see Sniffs/Commenting/TypeHintSniff.php):
-             when phpcbf imports a class name of an annotation, this sniff parses the doc comment in the
-             middle of the change and stops phpcbf with a fatal error. -->
-        <exclude name="CakePHP.Commenting.TypeHint"/>
-    </rule>
-
-    <!-- The order of the types in @param, @return and @var, as CakePHP.Commenting.TypeHint checks it.
-         Like that sniff, it does not check the tests. -->
-    <rule ref="CakePHP2Namespace.Commenting.TypeHint">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
+    <rule ref="CakePHP2"/>
 
     <!-- The rules below turn sniffs back on that CakePHP2 excludes for global classes. A message that
          a referenced standard excludes only comes back with an explicit severity. -->
@@ -47,12 +36,6 @@
          (@param Model $Model, not @param \Cake\Model\Model $Model). This includes global classes
          (use Exception; and @throws Exception). FullyQualifiedClassNameInAnnotation stays excluded. -->
     <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
-        <properties>
-            <property name="searchAnnotations" type="boolean" value="true"/>
-        </properties>
-    </rule>
-    <!-- A use statement for a class that only annotations name is not unused -->
-    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
         <properties>
             <property name="searchAnnotations" type="boolean" value="true"/>
         </properties>

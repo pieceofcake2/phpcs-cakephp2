@@ -166,6 +166,8 @@ pieceofcake2/app のディレクトリ構成 (`config/`、`src/`、`tests/`) の
 | --- | --- |
 | `Generic.Formatting.MultipleStatementAlignment` | `maxPadding` 1: 揃えた代入に追加できる空白は最大 1 つです。 |
 | `CakePHP2.TypeHints.TestReturnTypeHint` | `*/tests/TestCase/*` と `*/Test/Case/*` では、すべてのメソッドと関数にネイティブの戻り値の型が必要です: `setUp(): void`、`testFoo(): void`、`fooProvider(): array`。PHPUnit はテンプレートメソッドをネイティブの型で宣言しており、テストメソッドを呼ぶのは PHPUnit だけなので、CakePHP 2 のほかのコードと違ってテストでは使えます。何も返さないメソッドには `phpcbf` が `: void` を追加します。コンストラクターはチェックしません (`CakePHP` 規約は `tests/` では戻り値の型をまったくチェックしません)。 |
+| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: `use Cake\Network\CakeResponse;` のあとの `@return CakeResponse\|null` のように、アノテーションでしか使っていないクラスの `use` 文も、使われているとみなします。アプリケーション自身のクラスがグローバルでも、CakePHP 2.13 の名前空間付きのコアクラスは `use` で取り込むためです。 |
+| `CakePHP2.Commenting.TypeHint` | `CakePHP.Commenting.TypeHint` の代わりに使います。[アノテーションの型の順序](#order-of-the-types-in-annotations) をご覧ください。 |
 
 <a id="cakephp2namespace"></a>
 
@@ -232,22 +234,22 @@ class CounterBehavior extends ModelBehavior
 | Sniff | 設定 |
 | --- | --- |
 | `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` | `searchAnnotations` true: `@param \Cake\Model\Model $Model` や `@throws \InvalidArgumentException` のような、アノテーションの完全修飾名もコードと同じく報告します。`CakePHP` 規約がコードで求めているのと同じく、グローバルなクラスもインポートします (`use InvalidArgumentException;`)。`phpcbf` は `use` 文を追加し、短い名前に書き換えます。 |
-| `SlevomatCodingStandard.Namespaces.UnusedUses` | `searchAnnotations` true: コントローラーの `@property Post $Post` のように、アノテーションでしか使っていないクラスの `use` 文も、使われているとみなします。 |
 
 アノテーションに完全修飾名を求める `SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName`
-は、`CakePHP2` と同じく除外したままです。
+は、`CakePHP2` と同じく除外したままです。アノテーションでしか使っていない `use` 文を使われているとみなすのも、`CakePHP2` と同じです。
 
 <a id="order-of-the-types-in-annotations"></a>
 
 ### アノテーションの型の順序
 
 `@param`、`@return`、`@var` の型の順序 (`null|string` ではなく `string|null`) をチェックする
-`CakePHP.Commenting.TypeHint` の代わりに、`CakePHP2Namespace.Commenting.TypeHint` を使います。チェックする内容は
-同じですが、メッセージは `CakePHP2Namespace.Commenting.TypeHint.IncorrectFormat` として報告されるので、除外するときは
+`CakePHP.Commenting.TypeHint` の代わりに、どちらの規約でも `CakePHP2.Commenting.TypeHint` を使います。チェックする内容は
+同じですが、メッセージは `CakePHP2.Commenting.TypeHint.IncorrectFormat` として報告されるので、除外するときは
 この名前を指定してください。元の sniff と同じく、`tests/` はチェックしません。
 
-元の sniff は、`phpcbf` がアノテーションのクラス名をインポートするときに、`phpcbf` を致命的エラーで止めてしまいます。
-`ReferenceUsedNamesOnly` がドキュメントコメント全体を書き換え、その途中のコメントをこの sniff が解析するためです。
+元の sniff は、同じ回でほかの sniff がドキュメントコメントを書き換えると、`phpcbf` を致命的エラーで止めてしまいます。
+たとえば `CakePHP2Namespace` で `phpcbf` がアノテーションのクラス名をインポートするときは、`ReferenceUsedNamesOnly` が
+ドキュメントコメント全体を書き換え、その途中のコメントをこの sniff が解析します。
 代わりの sniff は、書き換え中のドキュメントコメントをスキップして `phpcbf` の次の回でチェックするので、`phpcbf` は
 引き続き型を並べ替えます。
 

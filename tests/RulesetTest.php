@@ -41,6 +41,14 @@ class RulesetTest extends TestCase
                 'invalid/Model/Post.php',
                 ['CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore'],
             ],
+            'a use statement that only an annotation needs' => ['valid/Controller/PagesController.php', []],
+            'an unused use statement and types in the wrong order' => [
+                'invalid/Controller/UnusedController.php',
+                [
+                    'CakePHP2.Commenting.TypeHint.IncorrectFormat',
+                    'SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse',
+                ],
+            ],
         ],
         'CakePHP2Namespace' => [
             'controller with a use statement only for an annotation' => ['valid/src/Controller/PostsController.php', []],
@@ -70,7 +78,7 @@ class RulesetTest extends TestCase
             'fully qualified class name and unsorted types in one doc comment' => [
                 'invalid/src/Model/Behavior/TaggableBehavior.php',
                 [
-                    'CakePHP2Namespace.Commenting.TypeHint.IncorrectFormat',
+                    'CakePHP2.Commenting.TypeHint.IncorrectFormat',
                     'SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName',
                 ],
             ],

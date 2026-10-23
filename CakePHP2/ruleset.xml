@@ -40,6 +40,24 @@
         <!-- ===== Formatting Rules ===== -->
         <exclude name="CakePHP.Commenting.FunctionComment.SpacingAfter"/>
         <exclude name="Generic.Files.LineLength"/>
+
+        <!-- Replaced by CakePHP2.Commenting.TypeHint (see Sniffs/Commenting/TypeHintSniff.php): when another
+             sniff rewrites a doc comment in a phpcbf pass, this sniff parses the comment in the middle of the
+             change and stops phpcbf with a fatal error. -->
+        <exclude name="CakePHP.Commenting.TypeHint"/>
+    </rule>
+
+    <!-- The order of the types in @param, @return and @var, as CakePHP.Commenting.TypeHint checks it.
+         Like that sniff, it does not check the tests. -->
+    <rule ref="CakePHP2.Commenting.TypeHint">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- A use statement for a class that only annotations name (@property, @param, @return) is not unused -->
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" type="boolean" value="true"/>
+        </properties>
     </rule>
 
     <!-- Align assignments with at most one extra space -->
